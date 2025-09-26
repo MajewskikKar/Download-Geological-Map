@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>399</width>
+    <width>412</width>
     <height>415</height>
    </rect>
   </property>
@@ -55,8 +55,8 @@
   <widget class="QListWidget" name="listWidget">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>50</y>
+     <x>160</x>
+     <y>70</y>
      <width>201</width>
      <height>121</height>
     </rect>
@@ -65,8 +65,8 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>40</y>
+     <x>20</x>
+     <y>60</y>
      <width>131</width>
      <height>131</height>
     </rect>
@@ -78,7 +78,7 @@
     <enum>QFrame::Plain</enum>
    </property>
    <property name="text">
-    <string>Wybierz produkty, które chcesz pobrać</string>
+    <string>Wybierz rodzaj mapy do pobrania</string>
    </property>
    <property name="textFormat">
     <enum>Qt::PlainText</enum>
@@ -126,17 +126,30 @@
     <string>Wybierz gdzie zapisać</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="approve_pushButton">
+  <widget class="QPushButton" name="download50k_pushButton">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>180</y>
-     <width>111</width>
+     <x>10</x>
+     <y>20</y>
+     <width>191</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>zatwierdź</string>
+    <string>Pobierz siatkę arkuszową 50k</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="download200k_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>20</y>
+     <width>191</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Pobierz siatkę arkuszową 200k</string>
    </property>
   </widget>
  </widget>

@@ -24,6 +24,7 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon, QIntValidator
 from qgis.PyQt.QtWidgets import QAction, QMessageBox, QListWidgetItem, QFileDialog
+from qgis.core import QgsRasterLayer, QgsProject, QgsVectorLayer
 import requests
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -189,9 +190,13 @@ class SMGP_dowloader:
         if self.first_start == True:
             self.first_start = False
             self.dlg = SMGP_dowloaderDialog()
+            self.dlg.download50k_pushButton.clicked.connect(self.download_grid)
+            self.dlg.download200k_pushButton.clicked.connect(self.download_grid)
             self.dlg.numer_ark_lineEdit.setValidator(QIntValidator(1,1082,self.dlg))
             self.dlg.save_dir_pushButton.clicked.connect(self.select_output_file)
-            self.dlg.approve_pushButton.clicked.connect(self.run_approve)
+
+        
+        #clearing listWidget and adding items
         self.dlg.listWidget.clear()
         map_items = ['mapa geologiczna','mapa hydrogeologiczna']
         for item_text in map_items:
@@ -200,18 +205,40 @@ class SMGP_dowloader:
         
         # show the dialog
         self.dlg.show()
-        # Run the dialog event loop
         result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            lineedit = self.dlg.numer_ark_lineEdit.text()
-            linevalidator = self.dlg.numer_ark_lineEdit.validator()
-            state, _, _ = linevalidator.validate(lineedit, 0)
 
-            if state != QIntValidator.Acceptable:
-                QMessageBox.information(self.dlg, "Invalid", "Input is invalid!")
-            else:
-                self.process_number(lineedit)
+
+        if result:
+            selected_item = self.dlg.listWidget.currentItem()
+            if selected_item.text() == 'mapa geologiczna':
+                lineedit = self.dlg.numer_ark_lineEdit.text()
+                linevalidator = self.dlg.numer_ark_lineEdit.validator()
+                state, _, _ = linevalidator.validate(lineedit, 0)
+                if state != QIntValidator.Acceptable:
+                    QMessageBox.information(self.dlg, "Invalid", "Taki arkusz nie istnieje! Wpisz liczbę od 1 do 1085.")
+                else:
+                    self.process_number(lineedit)
+            elif selected_item.text() == 'mapa hydrogeologiczna':
+                QMessageBox.information(self.dlg, "Information", "Kliknąłeś mapę hydrogeologiczną" )
+
+    def download_grid(self): 
+        sender = self.dlg.sender()
+        if sender == self.dlg.download50k_pushButton:
+            path_50k = os.path.join(self.plugin_dir, "grids/50k/50k_grid.shp")
+            grid_50k = QgsVectorLayer(path_50k, "50k_grid", "ogr")
+            if not grid_50k.isValid():
+                QMessageBox.critical(self.dlg, "Error", "Failed to load the vector layer.")
+                return
+            QgsProject.instance().addMapLayer(grid_50k)
+            QMessageBox.information(self.dlg, "Info", "Pobrano siatkę 50k")
+        if sender == self.dlg.download200k_pushButton:
+            path_200k = os.path.join(self.plugin_dir, "grids/200k/200k_grid.shp")
+            grid_200k = QgsVectorLayer(path_200k, "200k_grid", "ogr")
+            if not grid_200k.isValid():
+                QMessageBox.critical(self.dlg, "Error", "Failed to load the vector layer.")
+                return
+            QgsProject.instance().addMapLayer(grid_200k)
+            QMessageBox.information(self.dlg, "Info", "Pobrano siatkę 200k")
 
 
     #searching for url with basic smgp map
@@ -220,17 +247,12 @@ class SMGP_dowloader:
         number_checked = self.process_number_checker(number)
         mapa_geologiczna_link = f'https://bazadata.pgi.gov.pl/data/smgp/arkusze_skany/smgp{number_checked}.jpg'
         mapa_geologiczna_download = requests.get(mapa_geologiczna_link)
-        filename = f'smgp{number_checked}.jpg'
+        filename = f'smgp{number}.jpg'
         output_dir = self.dlg.save_dir_lineEdit.text()
         output_path = os.path.join(output_dir, filename)  # Combine directory and filename
         if output_path:
-            try:
-                with open(output_path, 'wb') as file:
-                    file.write(mapa_geologiczna_download.content)
-                QMessageBox.information(self.dlg, "Info", f"File saved successfully in: {output_path}")
-            except Exception as e:
-                QMessageBox.critical(self.dlg, "Error", f"Failed to save file: {e}")
-        QMessageBox.information(self.dlg, "Info", f"status code: {mapa_geologiczna_download.status_code}")
+            self.execute_mapa_geologiczna(output_path, mapa_geologiczna_download, number_checked)
+
 
     #checking number length and adding 0 if needed - used for process_number function
     def process_number_checker(self, number):
@@ -252,17 +274,17 @@ class SMGP_dowloader:
             QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)  
         self.dlg.save_dir_lineEdit.setText(directory) 
 
-    def run_approve(self):
-        selected_item = self.dlg.listWidget.currentItem()
-        text = selected_item.text()
+    def execute_mapa_geologiczna(self, output_path, mapa_geologiczna_download, number_checked):
+            try:
+                with open(output_path, 'wb') as file:
+                    file.write(mapa_geologiczna_download.content)
+                raster_layer = QgsRasterLayer(output_path, f'SMGP {number_checked}')
+                if raster_layer.isValid():
+                    QgsProject.instance().addMapLayer(raster_layer)
+                    QMessageBox.information(self.dlg, "Info", f"Zapisano arkusz w: {output_path}")
+                else:
+                    QMessageBox.critical(self.dlg, "Error", "Failed to load the raster layer.")
 
-        if text == 'mapa geologiczna':
-            self.download_mapa_geologiczna()
-        elif text == 'mapa hydrogeologiczna':
-            self.download_mapa_hydrogeologiczna()
-    
-    def download_mapa_geologiczna(self):
-        QMessageBox.information(self.dlg, "Info", "Szukasz mapy geologicznej. Teraz wpisz numer arkusza" )
-
-    def download_mapa_hydrogeologiczna(self):
-        QMessageBox.information(self.dlg, "Info", "Kliknąłeś mapę hydrogeologiczną" )
+                
+            except Exception as e:
+                QMessageBox.critical(self.dlg, "Error", f"Failed to save file: {e}")
