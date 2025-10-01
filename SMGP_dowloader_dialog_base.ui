@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>415</height>
+    <width>418</width>
+    <height>478</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>370</y>
+     <y>430</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -32,8 +32,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>210</y>
+     <x>30</x>
+     <y>320</y>
      <width>131</width>
      <height>31</height>
     </rect>
@@ -45,8 +45,8 @@
   <widget class="QLineEdit" name="numer_ark_lineEdit">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>220</y>
+     <x>180</x>
+     <y>330</y>
      <width>191</width>
      <height>21</height>
     </rect>
@@ -55,20 +55,20 @@
   <widget class="QListWidget" name="listWidget">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>70</y>
+     <x>180</x>
+     <y>220</y>
      <width>201</width>
-     <height>121</height>
+     <height>71</height>
     </rect>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>60</y>
+     <x>10</x>
+     <y>230</y>
      <width>131</width>
-     <height>131</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -93,8 +93,8 @@
   <widget class="QLineEdit" name="save_dir_lineEdit">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>270</y>
+     <x>180</x>
+     <y>380</y>
      <width>171</width>
      <height>21</height>
     </rect>
@@ -103,8 +103,8 @@
   <widget class="QPushButton" name="save_dir_pushButton">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>270</y>
+     <x>360</x>
+     <y>380</y>
      <width>31</width>
      <height>21</height>
     </rect>
@@ -116,8 +116,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>260</y>
+     <x>30</x>
+     <y>370</y>
      <width>131</width>
      <height>31</height>
     </rect>
@@ -130,7 +130,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>20</y>
+     <y>10</y>
      <width>191</width>
      <height>21</height>
     </rect>
@@ -143,13 +143,100 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>20</y>
+     <y>10</y>
      <width>191</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
     <string>Pobierz siatkę arkuszową 200k</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="FindButton_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>110</y>
+     <width>311</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+   <property name="cursor">
+    <cursorShape>ArrowCursor</cursorShape>
+   </property>
+   <property name="mouseTracking">
+    <bool>false</bool>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::TabFocus</enum>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::NoContextMenu</enum>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string>Wybierz miejsce z którego chcesz pobrać mapę</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+   <property name="autoExclusive">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>40</y>
+     <width>331</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wybierz skalę z której chcesz ściągnąć mapę</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_50k">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>70</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>mapa 50k</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_200k">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>70</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>mapa 200k</string>
    </property>
   </widget>
  </widget>

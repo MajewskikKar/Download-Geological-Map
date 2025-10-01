@@ -21,10 +21,11 @@
  *                                                                         *
  ***************************************************************************/
 """
+from qgis.gui import QgsMapToolEmitPoint
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon, QIntValidator
-from qgis.PyQt.QtWidgets import QAction, QMessageBox, QListWidgetItem, QFileDialog
-from qgis.core import QgsRasterLayer, QgsProject, QgsVectorLayer
+from qgis.PyQt.QtWidgets import *
+from qgis.core import QgsRasterLayer, QgsProject, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform
 import requests
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -46,6 +47,9 @@ class SMGP_dowloader:
         """
         # Save reference to the QGIS interface
         self.iface = iface
+        # inmitialize canvas
+        self.canvas = iface.mapCanvas()
+ 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
@@ -67,6 +71,7 @@ class SMGP_dowloader:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+        self.map_tool = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -190,39 +195,57 @@ class SMGP_dowloader:
         if self.first_start == True:
             self.first_start = False
             self.dlg = SMGP_dowloaderDialog()
+
+            #here store buttons actions
             self.dlg.download50k_pushButton.clicked.connect(self.download_grid)
             self.dlg.download200k_pushButton.clicked.connect(self.download_grid)
-            self.dlg.numer_ark_lineEdit.setValidator(QIntValidator(1,1082,self.dlg))
             self.dlg.save_dir_pushButton.clicked.connect(self.select_output_file)
+            self.dlg.FindButton_pushButton.clicked.connect(self.click_find)
 
+            #check which checkbox is checked
+            self.dlg.checkBox_50k.stateChanged.connect(self.checkbox_changed)
+            self.dlg.checkBox_200k.stateChanged.connect(self.checkbox_changed)
+
+            #here store validators
+            self.dlg.numer_ark_lineEdit.setValidator(QIntValidator(1,1082,self.dlg))
         
         #clearing listWidget and adding items
-        self.dlg.listWidget.clear()
-        map_items = ['mapa geologiczna','mapa hydrogeologiczna']
-        for item_text in map_items:
-            item = QListWidgetItem(item_text)
-            self.dlg.listWidget.addItem(item)
-        
-        # show the dialog
-        self.dlg.show()
         result = self.dlg.exec_()
-
-
+        self.dlg.show()
+        
         if result:
-            selected_item = self.dlg.listWidget.currentItem()
-            if selected_item.text() == 'mapa geologiczna':
-                lineedit = self.dlg.numer_ark_lineEdit.text()
-                linevalidator = self.dlg.numer_ark_lineEdit.validator()
-                state, _, _ = linevalidator.validate(lineedit, 0)
-                if state != QIntValidator.Acceptable:
-                    QMessageBox.information(self.dlg, "Invalid", "Taki arkusz nie istnieje! Wpisz liczbę od 1 do 1085.")
-                else:
-                    self.process_number(lineedit)
-            elif selected_item.text() == 'mapa hydrogeologiczna':
-                QMessageBox.information(self.dlg, "Information", "Kliknąłeś mapę hydrogeologiczną" )
+            #validate if number is correct
+            lineedit = self.dlg.numer_ark_lineEdit.text()
+            linevalidator = self.dlg.numer_ark_lineEdit.validator()
+                # self.dlg.raise_()
+                # self.dlg.activateWindow()
+            if not lineedit:
+                QMessageBox.information(self.dlg, "Invalid", "Wpisz numer arkusza.")
+            state, _, _ = linevalidator.validate(lineedit, 0)
+            if state != QIntValidator.Acceptable:
+                QMessageBox.information(self.dlg, "Invalid", "Podana liczba jest niepoprawna.")
+                self.dlg.raise_()
+                self.dlg.activateWindow()
+            else:
+                self.process_number(lineedit)
+            
+            
+
+    def fill_listwidget(self, use50k, use200k):
+        self.dlg.listWidget.clear()
+        if use50k or use200k:
+            map_items = ['mapa geologiczna','tekst do mapy geologicznej', 'mapa litogenetyczna'] #'mapa hydrogeologiczna'
+            for item_text in map_items:
+                item = QListWidgetItem(item_text)
+                self.dlg.listWidget.addItem(item)
+
+        # show the dialog
+
 
     def download_grid(self): 
+
         sender = self.dlg.sender()
+
         if sender == self.dlg.download50k_pushButton:
             path_50k = os.path.join(self.plugin_dir, "grids/50k/50k_grid.shp")
             grid_50k = QgsVectorLayer(path_50k, "50k_grid", "ogr")
@@ -231,6 +254,7 @@ class SMGP_dowloader:
                 return
             QgsProject.instance().addMapLayer(grid_50k)
             QMessageBox.information(self.dlg, "Info", "Pobrano siatkę 50k")
+
         if sender == self.dlg.download200k_pushButton:
             path_200k = os.path.join(self.plugin_dir, "grids/200k/200k_grid.shp")
             grid_200k = QgsVectorLayer(path_200k, "200k_grid", "ogr")
@@ -240,19 +264,90 @@ class SMGP_dowloader:
             QgsProject.instance().addMapLayer(grid_200k)
             QMessageBox.information(self.dlg, "Info", "Pobrano siatkę 200k")
 
+    def click_find(self):
+        self.PointTool = QgsMapToolEmitPoint(self.canvas)
+        self.PointTool.canvasClicked.connect(self.point_clicked)
+        self.canvas.setMapTool(self.PointTool)
+
+    def point_clicked(self, point):
+
+        #transforming point to WGS84
+        cooridnate_source = QgsProject.instance().crs()
+        coordinate_output = QgsCoordinateReferenceSystem("EPSG:4326") 
+        transform = QgsCoordinateTransform(cooridnate_source, coordinate_output, QgsProject.instance())
+        point_to_wgs = transform.transform(point)
+
+        #getting x and y coordinates in WGS84
+        x_wgs = str(round((point_to_wgs.x()),6))
+        y_wgs = str(round(point_to_wgs.y(),6))
+
+        #searching for number in 50k and 200k grid
+        layer_50k = QgsProject.instance().mapLayersByName("50k_grid")
+        layer_200k = QgsProject.instance().mapLayersByName("200k_grid")
+
+        #validating if any of the checkboxes is checked
+        if self.dlg.checkBox_50k.isChecked() == False and self.dlg.checkBox_200k.isChecked() == False:
+            QMessageBox.information(self.dlg, "Invalid", "Zaznacz siatkę 50k lub 200k.")
+        if self.dlg.checkBox_50k.isChecked() == True and self.dlg.checkBox_200k.isChecked() == True:
+            QMessageBox.information(self.dlg, "Invalid", "Zaznacz tylko jedną siatkę - 50k lub 200k.")
+        #checking where clicked point is in the grid of 50k and 200k
+        if self.dlg.checkBox_50k.isChecked():
+            for feature in layer_50k[0].getFeatures():
+                xmin = feature['XMIN']
+                xmax = feature['XMAX']
+                ymin = feature['YMIN']
+                ymax = feature['YMAX']
+                if (xmin  <= x_wgs <= xmax) and (ymin <= y_wgs <=ymax):
+                    input_number_50k = feature['NR_ARK']
+                    self.dlg.numer_ark_lineEdit.setText(input_number_50k)
+        if self.dlg.checkBox_200k.isChecked():
+            for feature in layer_200k[0].getFeatures():
+                xmin = feature['xmin']
+                xmax = feature['xmax']
+                ymin = feature['ymin']
+                ymax = feature['ymax']
+                if (xmin  <= x_wgs <= xmax) and (ymin <= y_wgs <=ymax):
+                    input_number_200k = feature['NUMER']
+                    self.dlg.numer_ark_lineEdit.setText(input_number_200k)
+        
+
+        self.canvas.unsetMapTool(self.PointTool)
+        self.dlg.activateWindow()
 
     #searching for url with basic smgp map
     def process_number(self, lineedit_value):
+        selected_item = self.dlg.listWidget.currentItem()
         number = str(lineedit_value)
         number_checked = self.process_number_checker(number)
-        mapa_geologiczna_link = f'https://bazadata.pgi.gov.pl/data/smgp/arkusze_skany/smgp{number_checked}.jpg'
-        mapa_geologiczna_download = requests.get(mapa_geologiczna_link)
-        filename = f'smgp{number}.jpg'
         output_dir = self.dlg.save_dir_lineEdit.text()
-        output_path = os.path.join(output_dir, filename)  # Combine directory and filename
-        if output_path:
-            self.execute_mapa_geologiczna(output_path, mapa_geologiczna_download, number_checked)
+        if selected_item is None:
+            QMessageBox.information(self.dlg, "Invalid", "Wybierz rodzaj mapy do pobrania.")
+            self.dlg.raise_()
+            self.dlg.activateWindow()
+            return
+        if selected_item.text() == 'mapa geologiczna':
+            mapa_geologiczna_link = f'https://bazadata.pgi.gov.pl/data/smgp/arkusze_skany/smgp{number_checked}.jpg'
+            mapa_geologiczna_download = requests.get(mapa_geologiczna_link)
+            filename = f'smgp{number}.jpg'
+            output_path = os.path.join(output_dir, filename) 
+            if output_path:
+                self.execute_file(output_path, mapa_geologiczna_download, number_checked)
 
+        elif selected_item.text() == 'tekst do mapy geologicznej':
+            tekst_do_mapy_geologicznej_link = f'https://bazadata.pgi.gov.pl/data/smgp/arkusze_txt/smgp{number_checked}.pdf'
+            tekst_do_mapy_geologicznej_download = requests.get(tekst_do_mapy_geologicznej_link)
+            filename = f'smgp{number}_tekst.pdf'
+            output_path = os.path.join(output_dir, filename) 
+            if output_path:
+                self.execute_file(output_path, tekst_do_mapy_geologicznej_download, number_checked)
+
+        elif selected_item.text() == 'mapa litogenetyczna':
+            mapa_geologiczna_link = f'https://bazadata.pgi.gov.pl/data/mlp/mlp{number_checked}.jpg'
+            mapa_litogenetyczna_download = requests.get(mapa_geologiczna_link)
+            filename = f'mlp{number}.jpg'
+            output_path = os.path.join(output_dir, filename) 
+            if output_path:
+                self.execute_file(output_path, mapa_litogenetyczna_download, number_checked)
 
     #checking number length and adding 0 if needed - used for process_number function
     def process_number_checker(self, number):
@@ -274,7 +369,7 @@ class SMGP_dowloader:
             QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)  
         self.dlg.save_dir_lineEdit.setText(directory) 
 
-    def execute_mapa_geologiczna(self, output_path, mapa_geologiczna_download, number_checked):
+    def execute_file(self, output_path, mapa_geologiczna_download, number_checked):
             try:
                 with open(output_path, 'wb') as file:
                     file.write(mapa_geologiczna_download.content)
@@ -288,3 +383,7 @@ class SMGP_dowloader:
                 
             except Exception as e:
                 QMessageBox.critical(self.dlg, "Error", f"Failed to save file: {e}")
+    def checkbox_changed(self):
+        use50k = self.dlg.checkBox_50k.isChecked()
+        use200k = self.dlg.checkBox_200k.isChecked()
+        self.fill_listwidget(use50k, use200k)
