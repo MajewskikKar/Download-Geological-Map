@@ -25,7 +25,7 @@ from qgis.gui import QgsMapToolEmitPoint
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon, QIntValidator
 from qgis.PyQt.QtWidgets import *
-from qgis.core import QgsRasterLayer, QgsProject, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsRasterLayer, QgsProject, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPointXY
 import requests
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -186,50 +186,52 @@ class SMGP_dowloader:
             self.iface.removeToolBarIcon(action)
 
 
-
     def run(self):
         """Run method that performs all the real work"""
 
-        # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        if self.first_start == True:
+        if self.first_start:
             self.first_start = False
             self.dlg = SMGP_dowloaderDialog()
 
-            #here store buttons actions
+            # akcje przycisków
             self.dlg.download50k_pushButton.clicked.connect(self.download_grid)
             self.dlg.download200k_pushButton.clicked.connect(self.download_grid)
             self.dlg.save_dir_pushButton.clicked.connect(self.select_output_file)
             self.dlg.FindButton_pushButton.clicked.connect(self.click_find)
 
-            #check which checkbox is checked
+            # checkboksy
             self.dlg.checkBox_50k.stateChanged.connect(self.checkbox_changed)
             self.dlg.checkBox_200k.stateChanged.connect(self.checkbox_changed)
 
-            #here store validators
+            # walidator numeru arkusza
             self.dlg.numer_ark_lineEdit.setValidator(QIntValidator(1,1082,self.dlg))
-        
-        #clearing listWidget and adding items
-        result = self.dlg.exec_()
+
+            self.dlg.download_map_pushbutton.clicked.connect(self.validate_and_process)
+
+        # pokaż okno niemodalnie
         self.dlg.show()
-        
-        if result:
-            #validate if number is correct
-            lineedit = self.dlg.numer_ark_lineEdit.text()
-            linevalidator = self.dlg.numer_ark_lineEdit.validator()
-                # self.dlg.raise_()
-                # self.dlg.activateWindow()
-            if not lineedit:
-                QMessageBox.information(self.dlg, "Invalid", "Wpisz numer arkusza.")
-            state, _, _ = linevalidator.validate(lineedit, 0)
-            if state != QIntValidator.Acceptable:
-                QMessageBox.information(self.dlg, "Invalid", "Podana liczba jest niepoprawna.")
-                self.dlg.raise_()
-                self.dlg.activateWindow()
-            else:
-                self.process_number(lineedit)
-            
-            
+        self.dlg.raise_()
+        self.dlg.activateWindow()
+
+
+    def validate_and_process(self):
+        """Walidacja numeru arkusza i pobranie mapy"""
+        lineedit = self.dlg.numer_ark_lineEdit.text()
+        linevalidator = self.dlg.numer_ark_lineEdit.validator()
+
+        if not lineedit:
+            QMessageBox.information(self.dlg, "Invalid", "Wpisz numer arkusza.")
+            return
+
+        state, _, _ = linevalidator.validate(lineedit, 0)
+        if state != QIntValidator.Acceptable:
+            QMessageBox.information(self.dlg, "Invalid", "Podana liczba jest niepoprawna.")
+            self.dlg.raise_()
+            self.dlg.activateWindow()
+            return
+
+        # jeśli wszystko poprawne, wywołujemy pobranie mapy
+        self.process_number(lineedit)
 
     def fill_listwidget(self, use50k, use200k):
         self.dlg.listWidget.clear()
@@ -266,11 +268,11 @@ class SMGP_dowloader:
 
     def click_find(self):
         self.PointTool = QgsMapToolEmitPoint(self.canvas)
-        self.PointTool.canvasClicked.connect(self.point_clicked)
+        self.PointTool.canvasClicked.connect(lambda point, button: self.point_clicked(point))
         self.canvas.setMapTool(self.PointTool)
 
     def point_clicked(self, point):
-
+        source_point = QgsPointXY(point)
         #transforming point to WGS84
         cooridnate_source = QgsProject.instance().crs()
         coordinate_output = QgsCoordinateReferenceSystem("EPSG:4326") 
