@@ -21,14 +21,16 @@
  *                                                                         *
  ***************************************************************************/
 """
+
+from .utils_validate import Validate
 from .utils_find_point import FindPoint
 from .utils_gui import GuiUtils
 from .utils_download_map import DownloadMap
 from .utils_grid_manager import GridManager
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
-from qgis.PyQt.QtGui import QIcon, QIntValidator
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import *
-from qgis.core import  QgsVectorLayer
+from qgis.core import QgsVectorLayer
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -202,6 +204,7 @@ class SMGP_dowloader:
             self.download_map = DownloadMap(self.dlg)
             self.utils_gui = GuiUtils(self.dlg)
             self.find_point = FindPoint(self.dlg, self.iface, self.grid_10k, self.grid_50k, self.grid_200k)
+            self.validate = Validate(self.dlg, self.download_map)
             
             #temporary disable 10k checkbox
             self.dlg.checkBox_10k.setEnabled(False)
@@ -219,8 +222,8 @@ class SMGP_dowloader:
             self.dlg.checkBox_200k.stateChanged.connect(self.utils_gui.checkbox_changed)
 
             # walidator numeru arkusza
-            self.dlg.numer_ark_lineEdit.setValidator(QIntValidator(1,1082,self.dlg))
-            self.dlg.download_map_pushbutton.clicked.connect(self.validate_and_process)
+            self.dlg.download_map_pushbutton.clicked.connect(self.validate.validate_and_process)
+            
 
 
 
@@ -229,25 +232,6 @@ class SMGP_dowloader:
         self.dlg.raise_()
         self.dlg.activateWindow()
 
-
-    def validate_and_process(self):
-        """Walidacja numeru arkusza i pobranie mapy"""
-        lineedit = self.dlg.numer_ark_lineEdit.text()
-        linevalidator = self.dlg.numer_ark_lineEdit.validator()
-
-        if not lineedit:
-            QMessageBox.information(self.dlg, "Invalid", "Wpisz numer arkusza.")
-            return
-
-        state, _, _ = linevalidator.validate(lineedit, 0)
-        if state != QIntValidator.Acceptable:
-            QMessageBox.information(self.dlg, "Invalid", "Podana liczba jest niepoprawna.")
-            self.dlg.raise_()
-            self.dlg.activateWindow()
-            return
-
-        # jeśli wszystko poprawne, wywołujemy pobranie mapy
-        self.download_map.process_number(lineedit)
 
     def select_output_file(self):
         directory = QFileDialog.getExistingDirectory(
