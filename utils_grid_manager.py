@@ -6,7 +6,7 @@ class GridManager:
     def __init__(self, dlg, plugin_dir):
         self.dlg = dlg
         self.plugin_dir = plugin_dir
-
+        
     def download_grid(self): 
 
         sender = self.dlg.sender()
