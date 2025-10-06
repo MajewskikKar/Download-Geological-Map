@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-
+from .utils_select_output import OutputFile
 from .utils_validate import Validate
 from .utils_find_point import FindPoint
 from .utils_gui import GuiUtils
@@ -205,6 +205,7 @@ class SMGP_dowloader:
             self.utils_gui = GuiUtils(self.dlg)
             self.find_point = FindPoint(self.dlg, self.iface, self.grid_10k, self.grid_50k, self.grid_200k)
             self.validate = Validate(self.dlg, self.download_map)
+            self.output_file = OutputFile(self.dlg)
             
             #temporary disable 10k checkbox
             self.dlg.checkBox_10k.setEnabled(False)
@@ -213,7 +214,7 @@ class SMGP_dowloader:
             self.dlg.download10k_pushButton.clicked.connect(self.grid_manager.download_grid)
             self.dlg.download50k_pushButton.clicked.connect(self.grid_manager.download_grid)
             self.dlg.download200k_pushButton.clicked.connect(self.grid_manager.download_grid)
-            self.dlg.save_dir_pushButton.clicked.connect(self.select_output_file)
+            self.dlg.save_dir_pushButton.clicked.connect(self.output_file.select_output_file)
             self.dlg.FindButton_pushButton.clicked.connect(self.find_point.click_find)
 
             # checkboksy
@@ -225,20 +226,12 @@ class SMGP_dowloader:
             self.dlg.download_map_pushbutton.clicked.connect(self.validate.validate_and_process)
             
 
-
-
         # pokaż okno niemodalnie
         self.dlg.show()
         self.dlg.raise_()
         self.dlg.activateWindow()
 
 
-    def select_output_file(self):
-        directory = QFileDialog.getExistingDirectory(
-            self.dlg,
-            "Select directory to save files",
-            "",
-            QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)  
-        self.dlg.save_dir_lineEdit.setText(directory) 
+
 
 
