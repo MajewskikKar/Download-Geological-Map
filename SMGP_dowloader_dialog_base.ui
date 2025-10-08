@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>422</width>
-    <height>521</height>
+    <width>460</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>350</y>
+     <x>50</x>
+     <y>430</y>
      <width>131</width>
      <height>31</height>
     </rect>
@@ -29,56 +29,18 @@
   <widget class="QLineEdit" name="numer_ark_lineEdit">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>360</y>
+     <x>200</x>
+     <y>440</y>
      <width>191</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
-  <widget class="QListWidget" name="listWidget">
-   <property name="geometry">
-    <rect>
-     <x>140</x>
-     <y>110</y>
-     <width>271</width>
-     <height>151</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>170</y>
-     <width>131</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::NoFrame</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Plain</enum>
-   </property>
-   <property name="text">
-    <string>Wybierz rodzaj mapy do pobrania</string>
-   </property>
-   <property name="textFormat">
-    <enum>Qt::PlainText</enum>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="save_dir_lineEdit">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>420</y>
+     <x>200</x>
+     <y>500</y>
      <width>171</width>
      <height>21</height>
     </rect>
@@ -87,8 +49,8 @@
   <widget class="QPushButton" name="save_dir_pushButton">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>420</y>
+     <x>380</x>
+     <y>500</y>
      <width>31</width>
      <height>21</height>
     </rect>
@@ -100,8 +62,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>410</y>
+     <x>50</x>
+     <y>490</y>
      <width>131</width>
      <height>31</height>
     </rect>
@@ -113,8 +75,8 @@
   <widget class="QPushButton" name="download50k_pushButton">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>10</y>
+     <x>170</x>
+     <y>20</y>
      <width>121</width>
      <height>21</height>
     </rect>
@@ -126,8 +88,8 @@
   <widget class="QPushButton" name="download200k_pushButton">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>10</y>
+     <x>310</x>
+     <y>20</y>
      <width>121</width>
      <height>21</height>
     </rect>
@@ -139,8 +101,8 @@
   <widget class="QPushButton" name="FindButton_pushButton">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>290</y>
+     <x>80</x>
+     <y>340</y>
      <width>311</width>
      <height>31</height>
     </rect>
@@ -187,8 +149,8 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>40</y>
+     <x>160</x>
+     <y>50</y>
      <width>121</width>
      <height>16</height>
     </rect>
@@ -200,8 +162,8 @@
   <widget class="QCheckBox" name="checkBox_50k">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>70</y>
+     <x>200</x>
+     <y>80</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -213,8 +175,8 @@
   <widget class="QCheckBox" name="checkBox_200k">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>70</y>
+     <x>330</x>
+     <y>80</y>
      <width>101</width>
      <height>20</height>
     </rect>
@@ -226,21 +188,32 @@
   <widget class="QPushButton" name="download_map_pushbutton">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>480</y>
+     <x>160</x>
+     <y>560</y>
      <width>141</width>
      <height>28</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Carlito</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="text">
     <string>Pobierz mapę</string>
+   </property>
+   <property name="autoRepeatDelay">
+    <number>301</number>
    </property>
   </widget>
   <widget class="QCheckBox" name="checkBox_10k">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>70</y>
+     <x>60</x>
+     <y>80</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -252,8 +225,8 @@
   <widget class="QPushButton" name="download10k_pushButton">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
+     <x>30</x>
+     <y>20</y>
      <width>121</width>
      <height>21</height>
     </rect>
@@ -265,8 +238,8 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>320</y>
+     <x>200</x>
+     <y>390</y>
      <width>31</width>
      <height>31</height>
     </rect>
@@ -274,6 +247,58 @@
    <property name="text">
     <string>lub</string>
    </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>200</y>
+     <width>131</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>Wybierz produkt do pobrania</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::PlainText</enum>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QTreeWidget" name="treeWidget">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>120</y>
+     <width>311</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="toolTipDuration">
+    <number>-1</number>
+   </property>
+   <property name="lineWidth">
+    <number>0</number>
+   </property>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOn</enum>
+   </property>
+   <column>
+    <property name="text">
+     <string notr="true">1</string>
+    </property>
+   </column>
   </widget>
  </widget>
  <resources/>

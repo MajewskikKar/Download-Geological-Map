@@ -12,7 +12,10 @@ class Validate:
         self.dlg.numer_ark_lineEdit.setValidator(QIntValidator(1,1082,self.dlg))
         linevalidator = self.dlg.numer_ark_lineEdit.validator()
         
-
+        if not (self.dlg.checkBox_50k.isChecked() or self.dlg.checkBox_200k.isChecked()):
+            QMessageBox.information(self.dlg, "Invalid", "Zaznacz skalę")
+            return
+        
         if not lineedit:
             QMessageBox.information(self.dlg, "Invalid", "Wpisz numer arkusza.")
             return
@@ -25,4 +28,6 @@ class Validate:
             return
 
         # jeśli wszystko poprawne, wywołujemy pobranie mapy
-        self.download_map.process_number(lineedit)
+        #self.download_map.process_number(lineedit)
+        self.download_map.process_number1(lineedit)
+

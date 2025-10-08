@@ -31,10 +31,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import *
 from qgis.core import QgsVectorLayer
-
-# Initialize Qt resources from file resources.py
 from .resources import *
-# Import the code for the dialog
 from .SMGP_dowloader_dialog import SMGP_dowloaderDialog
 import os.path
 
@@ -136,7 +133,7 @@ class SMGP_dowloader:
             added to self.actions list.
         :rtype: QAction
         """
-
+        icon_path = f'{self.plugin_dir}/icon.png'
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -206,7 +203,7 @@ class SMGP_dowloader:
             self.find_point = FindPoint(self.dlg, self.iface, self.grid_10k, self.grid_50k, self.grid_200k)
             self.validate = Validate(self.dlg, self.download_map)
             self.output_file = OutputFile(self.dlg)
-            
+            self.dlg.treeWidget.header().hide()
             #temporary disable 10k checkbox
             self.dlg.checkBox_10k.setEnabled(False)
 
@@ -221,7 +218,10 @@ class SMGP_dowloader:
             self.dlg.checkBox_10k.stateChanged.connect(self.utils_gui.checkbox_changed)
             self.dlg.checkBox_50k.stateChanged.connect(self.utils_gui.checkbox_changed)
             self.dlg.checkBox_200k.stateChanged.connect(self.utils_gui.checkbox_changed)
+            
+            
 
+            
             # walidator numeru arkusza
             self.dlg.download_map_pushbutton.clicked.connect(self.validate.validate_and_process)
             
