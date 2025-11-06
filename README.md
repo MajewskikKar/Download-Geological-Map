@@ -1,7 +1,7 @@
 # SMGP Downloader (QGIS Plugin)
 
 **SMGP Downloader** to wtyczka do **QGIS**, umożliwiająca pobieranie wybranych polskich map geologicznych w oparciu o wskazaną lokalizację bądź numer arkusza.  
-Narzędzie automatyzuje proces wyszukiwania i pobierania danych kartograficznych, zapewniając ich bezpośrednią integrację z QGIS.
+Narzędzie automatyzuje proces wyszukiwania i pobierania danych kartograficznych, zapewniając ich bezpośrednią integrację z QGIS. Interfejs graficzny oparty został o Qt Designer i PyQt  
 
 ---
 
@@ -11,12 +11,8 @@ Narzędzie automatyzuje proces wyszukiwania i pobierania danych kartograficznych
 - Pobieranie map geologicznych z serwera na podstawie numeru arkusza  
 - Walidacja danych wejściowych przed rozpoczęciem pobierania  
 - Zarządzanie siatkami arkuszy i warstwami wektorowymi  
-- Wybór katalogu zapisu wyników  
-- Interfejs graficzny oparty o Qt Designer i PyQt  
-- Obsługa wielu języków poprzez pliki tłumaczeń `.qm`
-
+  
 ---
-
 
 
 ## Struktura projektu
@@ -26,14 +22,13 @@ SMGP_dowloader/
 ├── __init__.py
 ├── SMGP_dowloader.py             # Główny plik wtyczki
 ├── SMGP_dowloader_dialog.py      # Klasa interfejsu użytkownika
-├── resources.qrc                 # Definicja zasobów (ikony, grafiki)
-├── icon.png                      # Ikona wtyczki
+├── icon.png                     
 │
-├── utils_find_point.py           # Wyszukiwanie arkusza na podstawie punktu
+├── utils_find_point.py           # Wyszukiwanie arkusza na podstawie wybranego punktu
 ├── utils_validate.py             # Walidacja numeru arkusza i danych wejściowych
-├── utils_download_map.py         # Logika pobierania map z serwera
+├── utils_download_map.py         # Pobieranie map z serwera
 ├── utils_grid_manager.py         # Zarządzanie siatkami arkuszy
-├── utils_gui.py                  # Obsługa interfejsu i zdarzeń GUI
+├── utils_gui.py                  # Obsługa interfejsu i zdarzeń GUI, walidacja
 ├── utils_select_output.py        # Wybór katalogu zapisu
 │
 ├── grids/                        # Siatki do pobrania
@@ -47,10 +42,8 @@ SMGP_dowloader/
 - Python 3.9+  
 - Biblioteki:
   - PyQt5  
-  - qgis.core, qgis.gui  
-  - osgeo.ogr (opcjonalnie, jeśli używana w siatkach)
-
----
+  - qgis.core, qgis.gui
+  - request, os
 
 ## Instalacja
 
@@ -62,8 +55,6 @@ SMGP_dowloader/
 
 Projekt udostępniany jest na licencji  
 **GNU General Public License v2.0 (GPLv2)** lub nowszej.  
-
-Szczegóły znajdują się w nagłówkach plików źródłowych.
 
 ---
 
