@@ -1,9 +1,13 @@
 ## Pobierz polskie mapy geologiczne
 
+
+
+
 **Pobierz polskie mapy geologiczne** to wtyczka do **QGIS**, umożliwiająca pobieranie wybranych polskich map geologicznych w oparciu o wskazaną lokalizację bądź numer arkusza.  
 Narzędzie automatyzuje proces wyszukiwania i pobierania danych kartograficznych, zapewniając ich bezpośrednią integrację z QGIS. Interfejs graficzny oparty został o Qt Designer i PyQt  
 
 ---
+
 
 ## Funkcjonalności
 
@@ -12,7 +16,7 @@ Narzędzie automatyzuje proces wyszukiwania i pobierania danych kartograficznych
 - Walidacja danych wejściowych przed rozpoczęciem pobierania  
 - Zarządzanie siatkami arkuszy i warstwami wektorowymi  
   
----
+![til](https://github.com/MajewskikKar/Download-Geological-Map/blob/main/gif_wtyczka.gif)
 
 
 ## Struktura projektu
