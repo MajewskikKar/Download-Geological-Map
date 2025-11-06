@@ -1,4 +1,4 @@
-# Pobierz polskie mapy geologiczne (QGIS Plugin)
+## Pobierz polskie mapy geologiczne
 
 **Pobierz polskie mapy geologiczne** to wtyczka do **QGIS**, umożliwiająca pobieranie wybranych polskich map geologicznych w oparciu o wskazaną lokalizację bądź numer arkusza.  
 Narzędzie automatyzuje proces wyszukiwania i pobierania danych kartograficznych, zapewniając ich bezpośrednią integrację z QGIS. Interfejs graficzny oparty został o Qt Designer i PyQt  
