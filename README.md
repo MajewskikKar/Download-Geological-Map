@@ -14,7 +14,7 @@ Narzędzie automatyzuje proces wyszukiwania i pobierania danych kartograficznych
 - Wyszukiwanie lokalizacji i automatyczne przypisanie do odpowiedniego arkusza (10k, 50k, 200k)  
 - Pobieranie map geologicznych z serwera na podstawie numeru arkusza  
 - Walidacja danych wejściowych przed rozpoczęciem pobierania  
-- Zarządzanie siatkami arkuszy i warstwami wektorowymi  
+- Dodawanie siatek arkuszowych
   
 ![til](https://github.com/MajewskikKar/Download-Geological-Map/blob/main/gif_wtyczka.gif)
 
